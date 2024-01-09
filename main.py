@@ -16,7 +16,7 @@ DB_CONFIG = {
             'port': 5432,    
             'user': 'ydcclkyluxxblw',
             'password': '10984c6b9c775b1020d496f434fb20b3f2d7bb7dd590774c4cde22c513fcdb24',    
-            'db': 'd7kb3aae5a9311',}
+            'database': 'd7kb3aae5a9311',}
 
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher()
