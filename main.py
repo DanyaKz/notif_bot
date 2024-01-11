@@ -10,6 +10,7 @@ from aiogram import Router
 from aiogram.filters import IS_MEMBER, IS_NOT_MEMBER, Command, ChatMemberUpdatedFilter
 from aiogram.handlers import MessageHandler
 import logging
+import pytz
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -48,16 +49,18 @@ async def get_notifications():
 
 async def send_notifications():
     notifications = await get_notifications()
-    if notifications == None:
+    if notifications is None:
         return
 
     tz_utc_plus_6 = pytz.timezone('Asia/Almaty')
     now = datetime.now(tz=tz_utc_plus_6)
+
     for notification in notifications:
-        deadline = notification['deadline']
-        message_text = "Еске саламын!\nНапоминаю!\nReminder!\n" + notification['message_text'] + f"Дедлайн/Deadline: {deadline}"
+        deadline = pytz.utc.localize(notification['deadline']).astimezone(tz_utc_plus_6)
+        message_text = "<b>Еске саламын!\nНапоминаю!\nReminder!\n\n</b><i>" + notification['message_text'] + f"</i>\n\n<u>Дедлайн/Deadline: {deadline}</u>"
         chat_id = notification['chat_id']
         num_of_notif = notification['num_of_notif']
+
         if (now >= deadline - timedelta(days=2) and num_of_notif < 2) or \
                 (now >= deadline - timedelta(days=1) and num_of_notif < 3) or \
                 now >= deadline - timedelta(hours=6):
@@ -66,7 +69,7 @@ async def send_notifications():
             else:
                 await mark_notification(notification)
             try:
-                await bot.send_message(chat_id, message_text)
+                await bot.send_message(chat_id, message_text, parse_mode = "HTML")
             except Exception as e:
                 print(f"Error sending message: {e}")
 
