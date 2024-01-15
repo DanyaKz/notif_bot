@@ -58,22 +58,21 @@ async def send_notifications():
     for notification in notifications:
         print(notification)
         print(now)
-        deadline = pytz.utc.localize(notification['deadline'])
+        deadline = datetime(notification['deadline'], tzinfo = timezone(timedelta(hours=6)))
         formatted_deadline = deadline.strftime('%d.%m.%Y %H:%M')
         
-        two_days_before = deadline - timedelta(days=2)
-        one_day_before = deadline - timedelta(days=1)
         six_hours_before = deadline - timedelta(hours=6)
         
+        dif = deadline - now
+
         message_text = f"<b>Еске саламын!\nНапоминаю!\nReminder!\n\n</b><i>{notification['message_text']}</i>\n\n<u>Дедлайн/Deadline:</u> {formatted_deadline}"
         
         num_of_notif = notification['num_of_notif']
         
-        should_mark = (now >= two_days_before and now <= one_day_before and num_of_notif < 2) or \
-                    (now >= one_day_before and now <= deadline and num_of_notif < 3) or \
-                    (now >= six_hours_before)
+        should_mark = (num_of_notif < 2 and dif.days == 3) or \
+                    (num_of_notif < dif.days + num_of_notif and dif.days == 1) or \
+                    now >= six_hours_before
         
-        print(should_mark)
 
         if should_mark:
             if now >= six_hours_before:
