@@ -56,7 +56,7 @@ async def send_notifications():
     now = datetime.now(tz=tz_utc_plus_6)
 
     for notification in notifications:
-        deadline = datetime(notification['deadline'], tzinfo = timezone(timedelta(hours=6)))
+        deadline = notification['deadline'].replace(tzinfo=timezone(timedelta(hours=6)))
         formatted_deadline = deadline.strftime('%d.%m.%Y %H:%M')
         
         six_hours_before = deadline - timedelta(hours=6)
