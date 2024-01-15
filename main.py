@@ -35,7 +35,7 @@ async def get_notifications():
     async with pool.acquire() as conn:
         try:
             notifications = await conn.fetch("""
-                SELECT m.id, m.deadline, m.message_text, g.chat_id, m.num_of_notif 
+                SELECT m.id,  m.deadline, m.message_text, g.chat_id, m.num_of_notif 
                 FROM messages m
                 JOIN notifications_groups ng ON ng.notif_id = m.id
                 RIGHT JOIN student_groups g ON g.id = ng.group_id
@@ -68,7 +68,7 @@ async def send_notifications():
         num_of_notif = notification['num_of_notif']
         
         should_mark = (num_of_notif < 2 and dif.days == 3) or \
-                    (num_of_notif < dif.days + num_of_notif and dif.days == 1) or \
+                    (num_of_notif < 3 and dif.days == 1) or \
                     now >= six_hours_before
         
 
