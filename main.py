@@ -56,6 +56,7 @@ async def send_notifications():
     now = datetime.now(tz=tz_utc_plus_6)
 
     for notification in notifications:
+        print(notification)
         deadline = pytz.utc.localize(notification['deadline'])
         formatted_deadline = deadline.strftime('%d.%m.%Y %H:%M')
         
@@ -71,6 +72,8 @@ async def send_notifications():
                     (now >= one_day_before and now <= deadline and num_of_notif < 3) or \
                     (now >= six_hours_before)
         
+        print(should_mark)
+
         if should_mark:
             if now >= six_hours_before:
                 await mark_notification(notification, False)
