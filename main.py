@@ -57,19 +57,28 @@ async def send_notifications():
 
     for notification in notifications:
         deadline = pytz.utc.localize(notification['deadline']).astimezone(tz_utc_plus_6)
-        message_text = "<b>Еске саламын!\nНапоминаю!\nReminder!\n\n</b><i>" + notification['message_text'] + f"</i>\n\n<u>Дедлайн/Deadline: {deadline}</u>"
-        chat_id = notification['chat_id']
+        formatted_deadline = deadline.strftime('%d.%m.%Y %H:%M')
+        
+        two_days_before = deadline - timedelta(days=2)
+        one_day_before = deadline - timedelta(days=1)
+        six_hours_before = deadline - timedelta(hours=6)
+        
+        message_text = f"<b>Еске саламын!\nНапоминаю!\nReminder!\n\n</b><i>{notification['message_text']}</i>\n\n<u>Дедлайн/Deadline:</u> {formatted_deadline}"
+        
         num_of_notif = notification['num_of_notif']
-
-        if (now >= deadline - timedelta(days=2) and num_of_notif < 2) or \
-                (now >= deadline - timedelta(days=1) and num_of_notif < 3) or \
-                now >= deadline - timedelta(hours=6):
-            if now >= deadline - timedelta(hours=6):
+        
+        should_mark = (now >= two_days_before and now <= one_day_before and num_of_notif < 2) or \
+                    (now >= one_day_before and now <= deadline and num_of_notif < 3) or \
+                    (now >= six_hours_before)
+        
+        if should_mark:
+            if now >= six_hours_before:
                 await mark_notification(notification, False)
             else:
                 await mark_notification(notification)
+            
             try:
-                await bot.send_message(chat_id, message_text, parse_mode = "HTML")
+                await bot.send_message(notification['chat_id'], message_text, parse_mode="HTML")
             except Exception as e:
                 print(f"Error sending message: {e}")
 
