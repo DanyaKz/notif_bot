@@ -56,7 +56,7 @@ async def send_notifications():
     now = datetime.now(tz=tz_utc_plus_6)
 
     for notification in notifications:
-        deadline = pytz.utc.localize(notification['deadline']).astimezone(tz_utc_plus_6)
+        deadline = pytz.utc.localize(notification['deadline'])
         formatted_deadline = deadline.strftime('%d.%m.%Y %H:%M')
         
         two_days_before = deadline - timedelta(days=2)
