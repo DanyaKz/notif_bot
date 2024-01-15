@@ -2,7 +2,7 @@ import aiogram
 from aiogram import Bot, types, Dispatcher
 import asyncpg
 import asyncio
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import pytz
 from aiogram.types import ChatMemberUpdated
 from middleware import SimpleLoggerMiddleware
@@ -56,8 +56,6 @@ async def send_notifications():
     now = datetime.now(tz=tz_utc_plus_6)
 
     for notification in notifications:
-        print(notification)
-        print(now)
         deadline = datetime(notification['deadline'], tzinfo = timezone(timedelta(hours=6)))
         formatted_deadline = deadline.strftime('%d.%m.%Y %H:%M')
         
