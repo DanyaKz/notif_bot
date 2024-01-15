@@ -57,6 +57,7 @@ async def send_notifications():
 
     for notification in notifications:
         print(notification)
+        print(now)
         deadline = pytz.utc.localize(notification['deadline'])
         formatted_deadline = deadline.strftime('%d.%m.%Y %H:%M')
         
